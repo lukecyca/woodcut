@@ -1,9 +1,9 @@
 #!/usr/bin/python
 
-from os import walk, remove
-from os.path import join, abspath, relpath, getmtime, isfile
+from os import walk, remove, listdir
+from os.path import join, abspath, relpath, getmtime, isfile, splitext
 from datetime import datetime
-from genshi.template import TemplateLoader
+from genshi.template import TemplateLoader, NewTextTemplate
 
 from romannumerals import int_to_roman
 from article import Article
@@ -69,35 +69,33 @@ class Generator(object):
                 a.generate()
                 
         # Generate non-article pages
-        pages = [join(self.root_path, 'index'),
-                 join(self.root_path, 'backissues'),
-                 ]
-        for p in pages:
-            print "Rendering %s.html" % p
-            template_loader = TemplateLoader('.', auto_reload=True)
-            index_template = template_loader.load('%s.xhtml' % p)
-            t = index_template.generate(meta={'title': None, 'articles': self.articles, 'path_to_root' : ''})
-            fh = open('%s.html' % p, 'w')
-            fh.write(t.render('html', doctype='html'))
+        for t_file in listdir(self.root_path):
+            (name, ext) = splitext(t_file)
+            o_file = ''
+            if ext == '.xhtml':
+                o_file = "%s%s" % (name, '.html')
+            elif ext in ['.newtxt', '.xml']:
+                o_file = name
+            else:
+                continue
+                
+            print "Rendering %s" % o_file
+            template = None
+            if ext == '.newtxt':
+                with open(join(self.root_path, t_file)) as f:
+                    template = NewTextTemplate(f)
+            else:
+                template_loader = TemplateLoader('.', auto_reload=True)
+                template = template_loader.load(join(self.root_path, t_file))
+            stream = template.generate(meta={'title': None, 'articles': self.articles, 'path_to_root' : ''})
+            fh = open(join(self.root_path, o_file), 'w')
+            if ext == '.xhtml':
+                fh.write(stream.render('html', doctype='html'))
+            else:
+                fh.write(stream.render())
             fh.close()
         
-        # Generate other things
-        other_things = [join(self.root_path, 'lukecyca.rss.xml'),
-                        join(self.root_path, 'test.ini.txt'),]
-        for p in other_things:
-            target_filename = p[:-4]
-            print "Rendering %s" % target_filename
-            template_loader = TemplateLoader('.', auto_reload=True)
-            index_template = template_loader.load(p)
-            t = index_template.generate(meta={'title': None, 'articles': self.articles, 'path_to_root' : ''})
-            fh = open(target_filename, 'w')
-            fh.write(t.render())
-            fh.close()
-            
-        #print "Generating RSS"
-        self.generate_rss()
-        print "Generating httpd.ini"
-        self.generate_httpdini()
+
         
     def clean(self):
         # Delete all .html files
@@ -105,23 +103,5 @@ class Generator(object):
             for f in files:
                 if f.endswith('.html'):
                     remove(join(root,f))
-        
-        # Delete miscellaneous build targets
-        remove(join(self.root_path, "lukecyca.xml"))
-        remove(join(self.root_path, "httpd.ini"))
                 
-    def generate_httpdini(self):
-        fh = open(join(self.root_path, 'httpd.ini'), 'w')
-        fh.write('[ISAPI_Rewrite]\n\n')
-        fh.write('RewriteRule /feed.* /lukecyca.xml [I,RP,CL]\n')
-        fh.write('RewriteRule /20[[:digit:]/]+ /backissues.html [I,RP,CL]\n')
-        fh.write('RewriteRule /category.* /backissues.html [I,RP,CL]\n')
-        fh.write('\n')
-        for a in self.articles:
-            imported_permalink = a.meta['imported_permalink']
-            for link in imported_permalink:
-                link = link.partition('lukecyca.com')[2].rstrip('/')
-                fh.write('RewriteRule %s.* /%s [I,RP,CL]\n' % (link, a.relative_url))
-        fh.close()
-
 
