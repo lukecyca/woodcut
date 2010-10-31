@@ -1,0 +1,23 @@
+#!/usr/bin/python
+
+import woodcut
+from optparse import OptionParser
+
+def main():
+    parser = OptionParser()
+    parser.add_option("--clean", action="store_true", dest="clean", default=False, help="Remove all .html files")
+    parser.add_option("--make", action="store_true", dest="make", default=False, help="Make all .html files that need updating")
+    (options, args) = parser.parse_args()
+    
+    if options.clean and options.make:
+        parser.error("Please choose only one command")
+        
+    if options.clean:
+        woodcut.generator.Generator(root_path=args[0]).clean()
+    elif options.make:
+        woodcut.generator.Generator(root_path=args[0]).generate()
+    else:
+        parser.error("No command given")
+            
+if __name__ == "__main__":
+    main()

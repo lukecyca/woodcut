@@ -1,6 +1,6 @@
 
-from SoupyPage import SoupyPage
-from typogrify import typogrify
+from soupypage import SoupyPage
+from typogrify.typogrify import typogrify
 from genshi.template import TemplateLoader
 from genshi import Markup
 
@@ -11,10 +11,10 @@ def get_first(iterable, default=None):
     return default
 
 class Article(object):
-    def __init__(self,path):
+    def __init__(self, path, relative_url):
         self.template_filepath = path
         self.target_filepath = path.replace('.xhtml','.html')
-        self.relative_url = self.target_filepath.partition('/')[2]
+        self.relative_url = relative_url
         
         # Get page metadata
         self.meta = {}
@@ -33,7 +33,7 @@ class Article(object):
     
     def generate(self):
         # Render templates
-        print "Rendering %s" % self.meta['title']
+        print "Rendering %s (%s)" % (self.relative_url, self.meta['title'])
         template_loader = TemplateLoader('.', auto_reload=True)
         article = template_loader.load(self.template_filepath)
         t = article.generate(meta=self.meta)
