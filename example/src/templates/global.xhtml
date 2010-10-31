@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:py="http://genshi.edgewall.org/" py:strip="">
+    <py:match path="head" once="true">
+    <head py:attrs="select('@*')">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Free Geek | <py:if test="meta.title">${meta.title}</py:if><py:if test="not meta.title">Ethical Computer Recycling in Vancouver, BC</py:if></title>
+        <link href="${meta.path_to_root}css/style.css" type="text/css" rel="stylesheet" media="screen" />
+        <!--[if lt IE 9]>
+        <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
+        <![endif]-->
+        ${select('*|text()')}
+    </head>
+    </py:match>
+</html>
