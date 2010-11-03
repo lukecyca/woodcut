@@ -5,6 +5,7 @@ from os.path import join, abspath, relpath, getmtime, isfile, splitext
 from datetime import datetime
 from genshi.template import TemplateLoader, NewTextTemplate
 
+from soupypage import SoupyPage
 from romannumerals import int_to_roman
 from article import Article
 
@@ -81,21 +82,24 @@ class Generator(object):
                 
             print "Rendering %s" % o_file
             template = None
+            title = None
             if ext == '.newtxt':
                 with open(join(self.root_path, t_file)) as f:
                     template = NewTextTemplate(f)
             else:
                 template_loader = TemplateLoader('.', auto_reload=True)
                 template = template_loader.load(join(self.root_path, t_file))
-            stream = template.generate(meta={'title': None, 'articles': self.articles, 'path_to_root' : ''})
+                sp = SoupyPage()
+                sp.open(join(self.root_path, t_file))
+                title = SoupyPage.get_first(sp.get_meta('title'))
+            stream = template.generate(meta={'title': title, 'articles': self.articles, 'path_to_root' : ''})
             fh = open(join(self.root_path, o_file), 'w')
             if ext == '.xhtml':
-                fh.write(stream.render('html', doctype='html'))
+                fh.write(stream.render('xhtml', doctype='xhtml'))
             else:
                 fh.write(stream.render())
             fh.close()
         
-
         
     def clean(self):
         # Delete all .html files

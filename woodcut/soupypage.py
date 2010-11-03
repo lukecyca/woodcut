@@ -35,3 +35,11 @@ class SoupyPage(object):
         meta_tag['name'] = key
         meta_tag['content'] = value
         self.soup.head.insert(0,meta_tag)
+        
+    @classmethod
+    def get_first(cls, iterable, default=None):
+        if iterable:
+            for item in iterable:
+                return item
+        return default
+            

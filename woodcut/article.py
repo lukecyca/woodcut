@@ -4,11 +4,7 @@ from typogrify.typogrify import typogrify
 from genshi.template import TemplateLoader
 from genshi import Markup
 
-def get_first(iterable, default=None):
-    if iterable:
-        for item in iterable:
-            return item
-    return default
+
 
 class Article(object):
     def __init__(self, path, relative_url):
@@ -20,12 +16,12 @@ class Article(object):
         self.meta = {}
         sp = SoupyPage()
         sp.open(self.template_filepath)
-        self.meta['disabled'] = get_first(sp.get_meta('disabled'))
-        self.meta['date'] = get_first(sp.get_meta('date'))
-        self.meta['title'] = get_first(sp.get_meta('title'))
-        self.meta['description'] = get_first(sp.get_meta('description'))
+        self.meta['disabled'] = SoupyPage.get_first(sp.get_meta('disabled'))
+        self.meta['date'] = SoupyPage.get_first(sp.get_meta('date'))
+        self.meta['title'] = SoupyPage.get_first(sp.get_meta('title'))
+        self.meta['description'] = SoupyPage.get_first(sp.get_meta('description'))
         self.meta['imported_permalink'] = sp.get_meta('imported_permalink')
-        self.meta['title_typogrify'] = Markup(typogrify(get_first(sp.get_meta('title'))))
+        self.meta['title_typogrify'] = Markup(typogrify(SoupyPage.get_first(sp.get_meta('title'))))
         self.meta['next_article_url'] = '#'
         self.meta['prev_article_url'] = '#'
         self.meta['relative_url'] = self.relative_url
@@ -40,5 +36,5 @@ class Article(object):
         
         # Output the HTML file
         fh = open(self.target_filepath, 'w')
-        fh.write(t.render('html', doctype='html'))
+        fh.write(t.render('xhtml', doctype='xhtml'))
         fh.close()
