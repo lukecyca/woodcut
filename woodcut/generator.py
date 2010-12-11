@@ -12,11 +12,12 @@ from article import Article
 
 
 class Generator(object):
-    def __init__(self, root_path=''):
-        self.root_path = abspath(root_path)
+    def __init__(self, src_path='', build_path=''):
+        self.src_path = abspath(src_path)
+        self.build_path = abspath(build_path)
         
     def get_template_root(self):
-        return join(self.root_path, 'templates')
+        return join(self.src_path, 'templates')
         
     def get_template_mtime(self):
         """Returns the last time the templates were modified"""
@@ -30,11 +31,11 @@ class Generator(object):
     def load_articles(self):
         """Load all articles and metadata"""
         self.articles = []
-        for root, dirs, files in walk(self.root_path):
+        for root, dirs, files in walk(self.src_path):
             for f in files:
-                if root.startswith(join(self.root_path, '20')) and f.endswith('.xhtml'):
+                if root.startswith(join(self.src_path, '20')) and f.endswith('.xhtml'):
                     a = Article(join(root,f),
-                                relpath(join(root,f), self.root_path).replace('.xhtml','.html'))
+                                relpath(join(root,f), self.src_path).replace('.xhtml','.html'))
                     if not a.meta['disabled']:
                         self.articles.append(a)
         print "Loaded %i articles" % len(self.articles)
@@ -70,7 +71,7 @@ class Generator(object):
                 a.generate()
                 
         # Generate non-article pages
-        for t_file in listdir(self.root_path):
+        for t_file in listdir(self.src_path):
             (name, ext) = splitext(t_file)
             o_file = ''
             if ext == '.xhtml':
@@ -84,16 +85,16 @@ class Generator(object):
             template = None
             title = None
             if ext == '.newtxt':
-                with open(join(self.root_path, t_file)) as f:
+                with open(join(self.src_path, t_file)) as f:
                     template = NewTextTemplate(f)
             else:
                 template_loader = TemplateLoader('.', auto_reload=True)
-                template = template_loader.load(join(self.root_path, t_file))
+                template = template_loader.load(join(self.src_path, t_file))
                 sp = SoupyPage()
-                sp.open(join(self.root_path, t_file))
+                sp.open(join(self.src_path, t_file))
                 title = SoupyPage.get_first(sp.get_meta('title'))
             stream = template.generate(meta={'title': title, 'articles': self.articles, 'path_to_root' : ''})
-            fh = open(join(self.root_path, o_file), 'w')
+            fh = open(join(self.build_path, o_file), 'w')
             if ext == '.xhtml':
                 fh.write(stream.render('xhtml', doctype='xhtml'))
             else:
@@ -103,7 +104,7 @@ class Generator(object):
         
     def clean(self):
         # Delete all .html files
-        for root, dirs, files in walk(self.root_path):
+        for root, dirs, files in walk(self.src_path):
             for f in files:
                 if f.endswith('.html'):
                     remove(join(root,f))
