@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:py="http://genshi.edgewall.org/" py:strip="">
+    <xi:include href="global.xhtml" />
+    <py:match path="head">
+    <head py:attrs="select('@*')">
+        <link href="${meta.path_to_root}css/page.css" type="text/css" rel="stylesheet" media="screen" />
+        ${select('*|node()')}
+    </head>
+    </py:match>
+</html>
