@@ -11,11 +11,16 @@ def main():
     
     if options.clean and options.make:
         parser.error("Please choose only one command")
-        
+    if len(args) == 0:
+        parser.error("No source path")
+
     if options.clean:
         woodcut.generator.Generator(root_path=args[0]).clean()
     elif options.make:
-        woodcut.generator.Generator(root_path=args[0]).generate()
+        if len(args) == 1:
+            woodcut.generator.Generator(src_path=args[0], build_path=args[0]).generate()
+        if len(args) == 2:
+            woodcut.generator.Generator(src_path=args[0], build_path=args[1]).generate()
     else:
         parser.error("No command given")
             
