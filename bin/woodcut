@@ -3,6 +3,7 @@
 from woodcut.project import Project
 from optparse import OptionParser
 
+
 def main():
     parser = OptionParser()
     parser.add_option("--clean", action="store_true", dest="clean", default=False, help="Remove all .html files")
@@ -11,16 +12,15 @@ def main():
     
     if options.clean and options.make:
         parser.error("Please choose only one command")
-    if len(args) == 0:
-        parser.error("No source path")
+    if len(args) != 2:
+        parser.error("Wrong arguments given")
+
+    proj = Project(src_path=args[0], build_path=args[1])
 
     if options.clean:
-        Project(root_path=args[0]).clean()
+        proj.clean()
     elif options.make:
-        if len(args) == 1:
-            Project(src_path=args[0], build_path=args[0]).generate()
-        if len(args) == 2:
-            Project(src_path=args[0], build_path=args[1]).generate()
+        proj.generate()
     else:
         parser.error("No command given")
             

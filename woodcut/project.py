@@ -84,11 +84,11 @@ class Project(object):
                            
     def clean(self):
         """Delete everything in the build directory"""
-        for root, dirs, files in walk(self.build_path, topdown=False):
+        for root, dirs, files in os.walk(self.build_path, topdown=False):
             for f in files:
-                remove(join(root,f))
+                os.remove(os.path.join(root,f))
             for d in dirs:
-                rmdir(join(root,d))
+                os.rmdir(os.path.join(root,d))
                 
 #    def load_articles(self):
 #        """Load all articles and metadata"""
