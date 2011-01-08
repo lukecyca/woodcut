@@ -7,7 +7,6 @@ from genshi.template import TemplateLoader, NewTextTemplate
 
 from soupypage import SoupyPage
 from romannumerals import int_to_roman
-from article import Article
 
 IGNORE_FILES = ['.DS_Store']
 IGNORE_DIRECTORIES = ['templates']
