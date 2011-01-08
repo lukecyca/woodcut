@@ -13,8 +13,6 @@ setup(
     license = "BSD",
     keywords = "genshi template static web development",
     url = "https://github.com/lukecyca/woodcut",
-    packages=['woodcut'],
-    scripts=["bin/woodcut"],
     long_description=read('README.markdown'),
     classifiers=[
         "Development Status :: 3 - Alpha",
@@ -23,4 +21,8 @@ setup(
         "Topic :: Internet :: WWW/HTTP :: Site Management",
         "Topic :: Text Processing :: Markup",
     ],
+    
+    packages=['woodcut'],
+    scripts=["bin/woodcut"],
+    requires=['BeautifulSoup (>=3.0.8)'],
 )
