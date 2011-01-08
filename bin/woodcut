@@ -6,21 +6,21 @@ from optparse import OptionParser
 
 def main():
     parser = OptionParser()
-    parser.add_option("--clean", action="store_true", dest="clean", default=False, help="Remove all .html files")
-    parser.add_option("--make", action="store_true", dest="make", default=False, help="Make all .html files that need updating")
+    parser.add_option("--clean", action="store_true", dest="clean", default=False, help="Delete everything inside the build directory")
+    parser.add_option("--build", action="store_true", dest="build", default=False, help="Build the entire source tree in the build directory")
     (options, args) = parser.parse_args()
     
-    if options.clean and options.make:
+    if options.clean and options.build:
         parser.error("Please choose only one command")
     if len(args) != 2:
         parser.error("Wrong arguments given")
 
-    proj = Project(src_path=args[0], build_path=args[1])
+    proj = Project(src_root=args[0], build_root=args[1])
 
     if options.clean:
         proj.clean()
-    elif options.make:
-        proj.generate()
+    elif options.build:
+        proj.build()
     else:
         parser.error("No command given")
             

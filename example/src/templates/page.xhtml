@@ -3,7 +3,7 @@
     <xi:include href="global.xhtml" />
     <py:match path="head">
     <head py:attrs="select('@*')">
-        <link href="${meta.path_to_root}css/page.css" type="text/css" rel="stylesheet" media="screen" />
+        <link href="${relative_path('css/page.css')}" type="text/css" rel="stylesheet" media="screen" />
         ${select('*|node()')}
     </head>
     </py:match>
