@@ -24,5 +24,6 @@ setup(
     
     packages=['woodcut'],
     scripts=["bin/woodcut"],
-    requires=['BeautifulSoup (>=3.0.8)'],
+    requires=["BeautifulSoup (>=3.0.8)"
+              "Genshi (>=0.6)"],
 )
