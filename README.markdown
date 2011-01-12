@@ -12,7 +12,7 @@ Templates are processed as follows:
 The entire directory structure of the source directory is replicated in the build directory, and all files not meeting the above criteria appear in the build directory as symlinks to their source files.
 
 ## Installation ##
-Download and install [BeautifulSoup](http://www.crummy.com/software/BeautifulSoup/)
+Download and install [BeautifulSoup](http://www.crummy.com/software/BeautifulSoup/) and [Genshi](http://genshi.edgewall.org/wiki/Download)
 
 Install Woodcut:
 
