@@ -6,7 +6,6 @@ from datetime import datetime
 from genshi.template import TemplateLoader, NewTextTemplate
 
 from soupypage import SoupyPage
-from romannumerals import int_to_roman
 
 IGNORE_FILES = ['.DS_Store']
 IGNORE_DIRECTORIES = ['templates']
