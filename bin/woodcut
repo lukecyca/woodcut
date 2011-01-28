@@ -13,9 +13,9 @@ def main():
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False, help="Show more logging information")
     (options, args) = parser.parse_args()
     
-    if args[0] == 'build' and len(args) == 3:
+    if len(args) == 3 and args[0] == 'build':
         Project(src_root=args[1], build_root=args[2]).build()
-    elif args[0] == 'clean' and len(args) == 3:
+    elif len(args) == 3 and args[0] == 'clean':
         Project(src_root=args[1], build_root=args[2]).clean()
     else:
         parser.print_usage()
