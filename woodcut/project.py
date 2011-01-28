@@ -4,6 +4,7 @@ import os
 import os.path
 from datetime import datetime
 from genshi.template import TemplateLoader, NewTextTemplate
+from genshi.template.base import TemplateSyntaxError
 
 from soupypage import SoupyPage
 
@@ -72,7 +73,13 @@ class Project(object):
                 elif not os.path.exists(os.path.join(self.build_root, path, d)):
                     os.mkdir(os.path.join(self.build_root, path, d))
             for f in [x for x in files if x not in IGNORE_FILES]:
-                self.build_file(os.path.join(path, f))
+                try:
+                    self.build_file(os.path.join(path, f))
+                except TemplateSyntaxError, e:
+                    if e.msg.find('line {0}'.format(e.lineno)) >= 0:
+                        print '    Error {0}'.format(e.msg)
+                    else:
+                        print '    Error {0}, line {1}'.format(e.msg, e.lineno)
 
     def clean(self):
         """Delete everything in the build directory"""
