@@ -62,6 +62,8 @@ class Project(object):
         fh.close()
 
     def build(self):
+        if not os.path.exists(self.build_root):
+            os.mkdir(self.build_root)
         os.chdir(self.src_root)
         for path, dirs, files in os.walk('.'):
             for d in dirs:
