@@ -22,10 +22,14 @@ Install Woodcut:
 You can try it on the example source tree.
 
     mbp:woodcut luke$ cd example/
-    mbp:example luke$ woodcut --build src/ build/
+    mbp:example luke$ woodcut build src/ build/
     Rendering htaccess.conf
     Rendering index.html
     Rendering foo.html
 
+You will find the files rendered in the `build` directory.
+
 ## Examples ##
-A live example is <http://lukecyca.com>.
+* <http://lukecyca.com>
+* <http://bkpr.ca>
+* <http://freegeek.nutok.com> (In Progress)

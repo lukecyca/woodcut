@@ -1,28 +1,25 @@
 #!/usr/bin/python
 
+import sys
 from woodcut.project import Project
 from optparse import OptionParser
 
+import pkg_resources
+version = pkg_resources.require("woodcut")[0].version
 
 def main():
-    parser = OptionParser()
-    parser.add_option("--clean", action="store_true", dest="clean", default=False, help="Delete everything inside the build directory")
-    parser.add_option("--build", action="store_true", dest="build", default=False, help="Build the entire source tree in the build directory")
+    usage = "usage: %prog [options] command src_path build_path"
+    parser = OptionParser(usage=usage, version="%prog {0}".format(version))
+    parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False, help="Show more logging information")
     (options, args) = parser.parse_args()
     
-    if options.clean and options.build:
-        parser.error("Please choose only one command")
-    if len(args) != 2:
-        parser.error("Wrong arguments given")
-
-    proj = Project(src_root=args[0], build_root=args[1])
-
-    if options.clean:
-        proj.clean()
-    elif options.build:
-        proj.build()
+    if args[0] == 'build' and len(args) == 3:
+        Project(src_root=args[1], build_root=args[2]).build()
+    elif args[0] == 'clean' and len(args) == 3:
+        Project(src_root=args[1], build_root=args[2]).clean()
     else:
-        parser.error("No command given")
+        parser.print_usage()
+
             
 if __name__ == "__main__":
     main()
