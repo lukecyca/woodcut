@@ -6,12 +6,12 @@ def read(fname):
 
 setup(
     name = "woodcut",
-    version = "0.2.0",
+    version = "0.3.0",
     author = "Luke Cyca",
     author_email = "me@lukecyca.com",
     description = ("Minimalist content management system for static websites."),
     license = "BSD",
-    keywords = "genshi template static web development",
+    keywords = "mako template static web development",
     url = "https://github.com/lukecyca/woodcut",
     long_description=read('README.markdown'),
     classifiers=[
@@ -24,6 +24,5 @@ setup(
     
     packages=['woodcut'],
     scripts=["bin/woodcut"],
-    requires=["BeautifulSoup (>=3.0.8)",
-              "Genshi (>=0.6)"],
+    install_requires=["Mako>=0.4.2"],
 )

@@ -1,5 +1,0 @@
-{% python
-from genshi.builder import tag
-import random
-%}\
-Here's a nice random number: ${random.randint(0,60)}
