@@ -6,9 +6,11 @@ DIRECTORY = 'articles'
 
 articles = []
 for filename in [x for x in os.listdir(DIRECTORY) if x.find('.mako') > 0]:
-    template = Template(filename=os.path.join(DIRECTORY, filename))
+    template = Template(filename=os.path.join(DIRECTORY, filename),
+                        input_encoding='utf-8',
+                        output_encoding='utf-8',
+                        )
     articles.append((filename, template))
-    print int(u'0.5')
 %>
 <%inherit file="/templates/global.mako"/>
 Here is a list of articles:

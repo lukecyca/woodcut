@@ -17,7 +17,8 @@ class Project(object):
         self.build_root = os.path.abspath(build_root)
         self.lookup = TemplateLookup(directories=[self.src_root],
                                      module_directory=os.path.join(self.build_root, 'modules'),
-                                     disable_unicode=True,
+                                     output_encoding='utf-8',
+                                     input_encoding='utf-8',
                                      )
         
     
@@ -66,10 +67,10 @@ class Project(object):
                 elif not os.path.exists(os.path.join(self.build_root, 'root', path, d)):
                     os.mkdir(os.path.join(self.build_root, 'root', path, d))
             for f in [x for x in files if x not in IGNORE_FILES]:
-                try:
+                #try:
                     self.build_file(os.path.join(path, f))
-                except Exception, e:
-                    print '  ERROR: ' + str(e)
+                #except Exception, e:
+                #    print '  ERROR: ' + str(e)
 
     def clean(self):
         """Delete everything in the build directory"""
