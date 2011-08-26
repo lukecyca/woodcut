@@ -5,11 +5,11 @@ Woodcut is a system for building static websites from Mako source files.  It wil
 
 Any file that ends in `.mako` is considered a template, and will be rendered as a corresponding file in the build directory (but will drop the `.mako` extension).
 
-The entire directory structure of the source directory is replicated in the build directory, and all files not meeting the above criteria appear in the build directory as symlinks to their source files.
+The entire directory structure of the source directory is replicated in the build directory, and all non-template files appear in the build directory as symlinks to their source files.
 
 ## Installation ##
 
-    mbp:woodcut luke$ sudo python setup.py install
+    $ python setup.py install
 
 ## Usage ##
 You can try it on the example source tree.
@@ -22,7 +22,7 @@ You can try it on the example source tree.
 
 You will find the files rendered in the `build` directory.
 
-## Examples ##
+## Example Websites ##
 * <http://lukecyca.com>
 * <http://bkpr.ca>
 * <http://freegeekvancouver.org>
@@ -30,10 +30,10 @@ You will find the files rendered in the `build` directory.
 
 ## Version History ##
 
-### 0.3 ###
+### HEAD (0.3) ###
 
+* Removed binary, and using setuptools' entry_point instead
 * Changed from Genshi to Mako templates
-* Moved mako modules into build directory, and build products into <build>/root
 * Removed BeautifulSoup-style template inspection
 
 ### 0.2 ###

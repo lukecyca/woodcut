@@ -23,6 +23,11 @@ setup(
     ],
     
     packages=['woodcut'],
-    scripts=["bin/woodcut"],
     install_requires=["Mako>=0.4.2"],
+    
+    entry_points = {
+        'console_scripts': [
+            'woodcut = woodcut:main',
+        ]
+    }
 )
