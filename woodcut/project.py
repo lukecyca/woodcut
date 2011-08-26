@@ -2,6 +2,7 @@
 
 import os
 import os.path
+from shutil import copy
 from datetime import datetime
 from mako.template import Template
 from mako.lookup import TemplateLookup
@@ -12,9 +13,15 @@ IGNORE_FILES = ['.DS_Store', '.hgignore', '.gitignore']
 IGNORE_DIRECTORIES = ['templates', '.hg', '.git', '.mako_modules']
 
 class Project(object):
-    def __init__(self, src_root, build_root):
+    def __init__(self, src_root, build_root, **kwargs):
         self.src_root = os.path.abspath(src_root)
         self.build_root = os.path.abspath(build_root)
+        
+        try:
+            self.copy_flag = kwargs['copy']
+        except KeyError:
+            self.copy_flag = False
+        
         self.lookup = TemplateLookup(directories=[self.src_root],
                                      module_directory=os.path.join(self.src_root, '.mako_modules'),
                                      output_encoding='utf-8',
@@ -39,8 +46,12 @@ class Project(object):
         
         # Skip non-templates, and just link them to the source file
         if extension not in ['.mako']:
-            print "Symlinking %s" % root_relative_src_path
-            os.symlink(src_path, build_path)
+            if self.copy_flag:
+                print "Copying %s" % root_relative_src_path
+                copy(src_path, build_path)
+            else:
+                print "Symlinking %s" % root_relative_src_path
+                os.symlink(src_path, build_path)
             return
         
         # Determine output filename
