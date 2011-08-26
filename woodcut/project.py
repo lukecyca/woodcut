@@ -5,11 +5,11 @@ import os.path
 from datetime import datetime
 from mako.template import Template
 from mako.lookup import TemplateLookup
-from mako.exceptions import text_error_template, SyntaxException, CompileException
+from mako.exceptions import text_error_template, SyntaxException, CompileException, TemplateLookupException
 
 
-IGNORE_FILES = ['.DS_Store']
-IGNORE_DIRECTORIES = ['templates']
+IGNORE_FILES = ['.DS_Store', '.hgignore']
+IGNORE_DIRECTORIES = ['templates', '.hg']
 
 class Project(object):
     def __init__(self, src_root='', build_root=''):
@@ -39,6 +39,7 @@ class Project(object):
         
         # Skip non-templates, and just link them to the source file
         if extension not in ['.mako']:
+            print "Symlinking %s" % build_path
             os.symlink(src_path, build_path)
             return
         
@@ -48,11 +49,13 @@ class Project(object):
         # Render the template to the output path
         print "Rendering %s" % build_path
 
-        mako_src = self.lookup.get_template(root_relative_src_path)
-
-        fh = open(build_path, 'w')
-        fh.write(mako_src.render(relative_path=relative_path))
-        fh.close()
+        with open(build_path, 'w') as fh:
+            try:
+                mako_src = self.lookup.get_template(root_relative_src_path)
+                fh.write(mako_src.render(relative_path=relative_path))
+            except (CompileException, TemplateLookupException, SyntaxException), e:
+                print '  {0.__class__.__name__}: {0}'.format(e)
+        
 
     def build(self):
         if not os.path.exists(self.build_root):
@@ -66,11 +69,9 @@ class Project(object):
                     dirs.remove(d)
                 elif not os.path.exists(os.path.join(self.build_root, 'root', path, d)):
                     os.mkdir(os.path.join(self.build_root, 'root', path, d))
-            for f in [x for x in files if x not in IGNORE_FILES]:
-                #try:
+            for f in files:
+                if f not in IGNORE_FILES:
                     self.build_file(os.path.join(path, f))
-                #except Exception, e:
-                #    print '  ERROR: ' + str(e)
 
     def clean(self):
         """Delete everything in the build directory"""
