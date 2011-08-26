@@ -64,7 +64,7 @@ class Project(object):
             os.mkdir(os.path.join(self.build_root, 'root'))
         os.chdir(self.src_root)
         for path, dirs, files in os.walk('.'):
-            for d in dirs:
+            for d in list(dirs):
                 if d in IGNORE_DIRECTORIES:
                     dirs.remove(d)
                 elif not os.path.exists(os.path.join(self.build_root, 'root', path, d)):
