@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name = "woodcut",
-    version = "0.4.0",
+    version = "0.4.1",
     author = "Luke Cyca",
     author_email = "me@lukecyca.com",
     description = ("Minimalist content management system for static websites."),
