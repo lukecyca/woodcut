@@ -1,8 +1,4 @@
-import os
 from setuptools import setup
-
-def read(fname):
-    return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(
     name = "woodcut",
@@ -13,7 +9,7 @@ setup(
     license = "BSD-new",
     keywords = "mako template static web development",
     url = "http://wiki.github.com/lukecyca/woodcut",
-    long_description=read('README.markdown'),
+    long_description="Woodcut is a system for building static websites from Mako source files. It will walk your source directory, process any templates it finds, and produce a complete website in the build directory, ready to rsync to your webserver.",
     classifiers=[
         "Programming Language :: Python",
         "License :: OSI Approved :: BSD License",
