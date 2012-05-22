@@ -1,7 +1,9 @@
 <%!
-    title = "Lorem ipsum dolor sit amet"
-    author = "John Doe"
-    date = "2011-08-23"
+    _meta = {
+        'title': "Lorem ipsum dolor sit amet",
+        'author': "John Doe",
+        'date': "2011-08-28",
+    }
 %>
 <%inherit file="/templates/article.mako"/>
 
