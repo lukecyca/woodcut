@@ -2,3 +2,4 @@
 *.egg-info
 example/src/.mako_modules
 example/build
+*.swp

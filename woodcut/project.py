@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import re
 import sys
 import os
 import os.path
@@ -9,8 +10,23 @@ from mako.template import Template
 from mako.lookup import TemplateLookup
 
 
-IGNORE_FILES = ['.DS_Store', '.hgignore', '.gitignore']
-IGNORE_DIRECTORIES = ['templates', '.hg', '.git', '.mako_modules']
+#: Location within source directory to cache compiled mako modules
+MAKO_MODULES_DIR = '.mako_modules'
+
+
+#: Paths to ignore when building
+IGNORE_PATTERNS = [
+    r'\.DS_Store$',
+    r'\./\.hgignore$',
+    r'\./\.gitignore$',
+    r'\.swp$',
+    r'^\./templates',
+    r'^\./\.hg',
+    r'^\./\.git',
+    r'^\./{0}'.format(MAKO_MODULES_DIR),
+]
+for i in range(len(IGNORE_PATTERNS)):
+    IGNORE_PATTERNS[i] = re.compile(IGNORE_PATTERNS[i])
 
 
 class AttributeDict(dict):
@@ -26,7 +42,7 @@ class Project(object):
         self.copy_flag = kwargs.get('copy')
 
         self.lookup = TemplateLookup(directories=[self.src_root],
-                                     module_directory=os.path.join(self.src_root, '.mako_modules'),
+                                     module_directory=os.path.join(self.src_root, MAKO_MODULES_DIR),
                                      output_encoding='utf-8',
                                      input_encoding='utf-8',
                                      )
@@ -108,10 +124,11 @@ class Project(object):
         os.chdir(self.src_root)
         for path, dirs, files in os.walk('.'):
             for d in list(dirs):
-                if d in IGNORE_DIRECTORIES:
+                if any([ignore.search(os.path.join(path, d)) for ignore in IGNORE_PATTERNS]):
                     dirs.remove(d)
+
             for f in files:
-                if f not in IGNORE_FILES:
+                if not any([ignore.search(os.path.join(path, f)) for ignore in IGNORE_PATTERNS]):
                     md = self.get_template_metadata(os.path.join(path, f))
                     if md:
                         self.templates.append(md)
@@ -149,12 +166,12 @@ class Project(object):
         os.chdir(self.src_root)
         for path, dirs, files in os.walk('.'):
             for d in list(dirs):
-                if d in IGNORE_DIRECTORIES:
+                if any([ignore.search(os.path.join(path, d)) for ignore in IGNORE_PATTERNS]):
                     dirs.remove(d)
                 elif not os.path.exists(os.path.join(self.build_root, path, d)):
                     os.mkdir(os.path.join(self.build_root, path, d))
             for f in files:
-                if f not in IGNORE_FILES:
+                if not any([ignore.search(os.path.join(path, f)) for ignore in IGNORE_PATTERNS]):
                     self.build_template(os.path.join(path, f))
 
     def clean(self):
