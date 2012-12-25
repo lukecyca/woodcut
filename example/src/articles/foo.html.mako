@@ -1,5 +1,5 @@
 <%!
-    _meta = {
+    __meta__ = {
         'title': "Lorem ipsum dolor sit amet",
         'author': "John Doe",
         'date': "2011-08-28",

@@ -1,5 +1,5 @@
 <%!
-    _meta = {
+    __meta__ = {
         'title': u"Uñîçødë suppo®t in Woodcut",
         'author': "Luke Cyca",
         'date': "2011-08-25",

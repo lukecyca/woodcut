@@ -23,10 +23,7 @@ class Project(object):
         self.src_root = os.path.abspath(src_root)
         self.build_root = os.path.abspath(build_root)
 
-        try:
-            self.copy_flag = kwargs['copy']
-        except KeyError:
-            self.copy_flag = False
+        self.copy_flag = kwargs.get('copy')
 
         self.lookup = TemplateLookup(directories=[self.src_root],
                                      module_directory=os.path.join(self.src_root, '.mako_modules'),
@@ -34,14 +31,15 @@ class Project(object):
                                      input_encoding='utf-8',
                                      )
 
-        sys.path.insert(0, os.path.join(self.src_root, 'templates/util'))
+        # Make any python modules in src_root/templates/ available for import
+        sys.path.insert(0, os.path.join(self.src_root, 'templates'))
 
     def get_template_metadata(self, root_relative_src_path):
-        """Opens a template and collects its _meta dictionary"""
+        """Opens a template and collects its __meta__ module-level dictionary"""
 
-        # Skip non-templates, and just link them to the source file
+        # Skip non-templates
         if os.path.splitext(root_relative_src_path)[1] not in ['.mako']:
-            return
+            return None
 
         metadata = {'src_path': os.path.normpath(root_relative_src_path),
                     'build_path': os.path.normpath(root_relative_src_path).replace('.mako', ''),
@@ -50,10 +48,8 @@ class Project(object):
         template = Template(filename=root_relative_src_path,
                             output_encoding='utf-8',
                             input_encoding='utf-8')
-        try:
-            metadata.update(template.module._meta)
-        except AttributeError:
-            pass
+
+        metadata.update(getattr(template.module, '__meta__', {}))
 
         return AttributeDict(metadata)
 
