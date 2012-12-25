@@ -4,6 +4,7 @@ import re
 import sys
 import os
 import os.path
+import logging
 from shutil import copy
 from datetime import datetime
 from mako.template import Template
@@ -27,6 +28,9 @@ IGNORE_PATTERNS = [
 ]
 for i in range(len(IGNORE_PATTERNS)):
     IGNORE_PATTERNS[i] = re.compile(IGNORE_PATTERNS[i])
+
+
+logger = logging.getLogger(__package__)
 
 
 class AttributeDict(dict):
@@ -89,10 +93,10 @@ class Project(object):
         # Skip non-templates, and just link them to the source file
         if extension not in ['.mako']:
             if self.copy_flag:
-                print "Copying %s" % root_relative_src_path
+                logger.info("Copying %s" % root_relative_src_path)
                 copy(src_path, build_path)
             else:
-                print "Symlinking %s" % root_relative_src_path
+                logger.info("Symlinking %s" % root_relative_src_path)
                 os.symlink(src_path, build_path)
             return
 
@@ -100,7 +104,7 @@ class Project(object):
         build_path = build_path.replace('.mako', '')
 
         # Render the template to the output path
-        print "Rendering %s" % root_relative_src_path.replace('.mako', '')
+        logger.info("Rendering %s" % root_relative_src_path.replace('.mako', ''))
 
         # Find this template's metadata
         md = [t for t in self.templates if t['src_path'] == os.path.normpath(root_relative_src_path)][0]
@@ -113,12 +117,16 @@ class Project(object):
                                          articles=self.articles,
                                          meta=md,
                                          ))
-            except (CompileException, TemplateLookupException, SyntaxException), e:
-                print '  {0.__class__.__name__}: {0}'.format(e)
+            except Exception, e:
+                logger.error('Exception in {0}, {1.__class__.__name__}: {1}'.format(
+                    root_relative_src_path,
+                    e,
+                ))
 
     def _scan(self):
         """Collects metadata from all templates found in the source directory"""
 
+        logger.info("Scanning templates")
         self.templates = []
 
         os.chdir(self.src_root)
@@ -135,6 +143,8 @@ class Project(object):
 
     def _link_articles(self):
         """For all templates that have date metadata, sort them and link them back/forth"""
+
+        logger.info("Sorting templates")
 
         # If 'date' is present, sort by it
         def sort_by_date(template):
@@ -168,11 +178,16 @@ class Project(object):
             for d in list(dirs):
                 if any([ignore.search(os.path.join(path, d)) for ignore in IGNORE_PATTERNS]):
                     dirs.remove(d)
+                    logger.debug("Ignoring {0}".format(os.path.join(path, d)))
                 elif not os.path.exists(os.path.join(self.build_root, path, d)):
                     os.mkdir(os.path.join(self.build_root, path, d))
             for f in files:
                 if not any([ignore.search(os.path.join(path, f)) for ignore in IGNORE_PATTERNS]):
                     self.build_template(os.path.join(path, f))
+                else:
+                    logger.debug("Ignoring {0}".format(os.path.join(path, f)))
+
+        logger.info("Build complete")
 
     def clean(self):
         """Delete everything in the build directory"""
@@ -183,3 +198,4 @@ class Project(object):
             for d in dirs:
                 os.rmdir(os.path.join(root, d))
 
+        logger.info("Clean complete")

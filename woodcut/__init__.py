@@ -4,6 +4,10 @@ from optparse import OptionParser
 import pkg_resources
 version = pkg_resources.require("woodcut")[0].version
 
+import logging
+FORMAT = '%(relativeCreated)8.2fms  %(message)s'
+logging.basicConfig(level=logging.DEBUG, format=FORMAT)
+
 
 def main():
     usage = "usage: %prog [options] command src_path build_path"
