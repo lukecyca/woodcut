@@ -112,18 +112,13 @@ class Project(object):
                  if t['src_path'] == os.path.normpath(root_relative_src_path)]
 
         with open(build_path, 'w') as fh:
-            try:
-                mako_src = self.lookup.get_template(root_relative_src_path)
-                fh.write(mako_src.render(relative_path=relative_path,
-                                         templates=self.templates,
-                                         articles=self.articles,
-                                         meta=md,
-                                         ))
-            except Exception as e:
-                logger.error('Exception in {0}, {1.__class__.__name__}: {1}'.format(
-                    root_relative_src_path,
-                    e,
-                ))
+            mako_src = self.lookup.get_template(root_relative_src_path)
+            fh.write(mako_src.render(
+                relative_path=relative_path,
+                templates=self.templates,
+                articles=self.articles,
+                meta=md,
+            ))
 
     def _scan(self):
         """Collects metadata from all templates found in the source directory"""
@@ -185,7 +180,10 @@ class Project(object):
                     os.mkdir(os.path.join(self.build_root, path, d))
             for f in files:
                 if not any([ignore.search(os.path.join(path, f)) for ignore in IGNORE_PATTERNS]):
-                    self.build_template(os.path.join(path, f))
+                    try:
+                        self.build_template(os.path.join(path, f))
+                    except Exception:
+                        logger.exception('Exception in {0}'.format(os.path.join(path, f)))
                 else:
                     logger.debug("Ignoring {0}".format(os.path.join(path, f)))
 

@@ -14,7 +14,24 @@ class TestExampleSite(unittest.TestCase):
         )
 
     def test_build(self):
-        """Merely a smoke test
-           This will ensure that the woodcut code is functioning, but will
-           not effectively catch errors when rendering the example templates"""
         self.p.build()
+
+    def test_index_template(self):
+        self.p._scan()
+        self.p._link_articles()
+        self.p.build_template('index.html.mako')
+
+    def test_htaccess_template(self):
+        self.p._scan()
+        self.p._link_articles()
+        self.p.build_template('htaccess.conf.mako')
+
+    def test_foo_template(self):
+        self.p._scan()
+        self.p._link_articles()
+        self.p.build_template('articles/foo.html.mako')
+
+    def test_unicode_template(self):
+        self.p._scan()
+        self.p._link_articles()
+        self.p.build_template('articles/unicode.html.mako')
