@@ -45,11 +45,12 @@ class Project(object):
 
         self.copy_flag = kwargs.get('copy')
 
-        self.lookup = TemplateLookup(directories=[self.src_root],
-                                     module_directory=os.path.join(self.src_root, MAKO_MODULES_DIR),
-                                     output_encoding='utf-8',
-                                     input_encoding='utf-8',
-                                     )
+        self.lookup = TemplateLookup(
+            directories=[self.src_root],
+            module_directory=os.path.join(self.src_root, MAKO_MODULES_DIR),
+            output_encoding='utf-8',
+            input_encoding='utf-8',
+        )
 
         # Make any python modules in src_root/templates/ available for import
         sys.path.insert(0, os.path.join(self.src_root, 'templates'))
@@ -107,7 +108,8 @@ class Project(object):
         logger.info("Rendering %s" % root_relative_src_path.replace('.mako', ''))
 
         # Find this template's metadata
-        md = [t for t in self.templates if t['src_path'] == os.path.normpath(root_relative_src_path)][0]
+        (md,) = [t for t in self.templates
+                 if t['src_path'] == os.path.normpath(root_relative_src_path)]
 
         with open(build_path, 'w') as fh:
             try:
@@ -117,7 +119,7 @@ class Project(object):
                                          articles=self.articles,
                                          meta=md,
                                          ))
-            except Exception, e:
+            except Exception as e:
                 logger.error('Exception in {0}, {1.__class__.__name__}: {1}'.format(
                     root_relative_src_path,
                     e,
