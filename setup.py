@@ -6,7 +6,7 @@ setup(
     author="Luke Cyca",
     author_email="me@lukecyca.com",
     description="Minimalist content management system for static websites.",
-    license="BSD-new",
+    license="MIT",
     keywords="mako template static web development",
     url="http://wiki.github.com/lukecyca/woodcut",
     long_description="Woodcut is a system for building static websites from Mako source files. It will walk your source directory, process any templates it finds, and produce a complete website in the build directory, ready to rsync to your webserver.",
