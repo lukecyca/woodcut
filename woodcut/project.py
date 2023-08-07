@@ -79,12 +79,15 @@ class Project(object):
 
         def relative_path(path):
             """Translates a root-relative path to a path relative to this file"""
-            backout_path = os.path.relpath('.', os.path.dirname(root_relative_src_path))
+            backout_path = os.path.relpath(
+                '.', os.path.dirname(root_relative_src_path))
             return os.path.normpath(os.path.join(backout_path, path))
 
         # Absolute paths to source and build objects
-        src_path = os.path.normpath(os.path.join(self.src_root, root_relative_src_path))
-        build_path = os.path.normpath(os.path.join(self.build_root, root_relative_src_path))
+        src_path = os.path.normpath(os.path.join(
+            self.src_root, root_relative_src_path))
+        build_path = os.path.normpath(os.path.join(
+            self.build_root, root_relative_src_path))
 
         if os.path.exists(build_path):
             os.unlink(build_path)
@@ -105,13 +108,14 @@ class Project(object):
         build_path = build_path.replace('.mako', '')
 
         # Render the template to the output path
-        logger.info("Rendering %s" % root_relative_src_path.replace('.mako', ''))
+        logger.info("Rendering %s" %
+                    root_relative_src_path.replace('.mako', ''))
 
         # Find this template's metadata
         (md,) = [t for t in self.templates
                  if t['src_path'] == os.path.normpath(root_relative_src_path)]
 
-        with open(build_path, 'w') as fh:
+        with open(build_path, 'wb') as fh:
             mako_src = self.lookup.get_template(root_relative_src_path)
             fh.write(mako_src.render(
                 relative_path=relative_path,
@@ -183,7 +187,8 @@ class Project(object):
                     try:
                         self.build_template(os.path.join(path, f))
                     except Exception:
-                        logger.exception('Exception in {0}'.format(os.path.join(path, f)))
+                        logger.exception(
+                            'Exception in {0}'.format(os.path.join(path, f)))
                 else:
                     logger.debug("Ignoring {0}".format(os.path.join(path, f)))
 
